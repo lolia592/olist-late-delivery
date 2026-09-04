@@ -19,10 +19,10 @@ env/
 
 # Data & model artifacts (will be tracked with DVC instead)
 data/processed/*
-data/models/*
+models/*
 data/charts/*
 !data/processed/.gitkeep
-!data/models/.gitkeep
+!models/.gitkeep
 !data/charts/.gitkeep
 
 # MLflow
