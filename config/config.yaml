@@ -1,0 +1,66 @@
+# =============================================
+# Project configuration
+# No hardcoded paths or magic values in code —
+# everything the pipeline needs lives here.
+# =============================================
+
+paths:
+  # Raw split artifacts (Notebook 3 output)
+  train_raw: "data/processed/notebook3_train.parquet"
+  val_raw: "data/processed/notebook3_val.parquet"
+  test_raw: "data/processed/notebook3_test.parquet"
+
+  # Feature-engineered artifacts (Notebook 5 output)
+  train_features: "data/processed/notebook5_train_features.parquet"
+  val_features: "data/processed/notebook5_val_features.parquet"
+  test_features: "data/processed/notebook5_test_features.parquet"
+
+  # Fitted transformers (Notebook 5 output — load only, never re-fit)
+  state_encoder: "models/notebook5_state_encoder.pkl"
+  scaler: "models/notebook5_scaler.pkl"
+  rare_states: "models/notebook5_rare_states.pkl"
+  feature_names: "models/notebook5_feature_names.pkl"
+
+  # Trained model (Notebook 6 output)
+  model: "models/notebook6_final_model.pkl"
+  results_summary: "models/notebook6_results_summary.csv"
+
+data:
+  label_column: "label"
+  positive_class: "Late"
+  negative_class: "On-time"
+
+split:
+  # Time-based split ratios (Notebook 3)
+  train_ratio: 0.70
+  val_ratio: 0.85   # cumulative cutoff (train_end -> val_end)
+  sort_column: "order_purchase_timestamp"
+
+features:
+  # Numeric columns that get log1p-transformed (Notebook 5)
+  numeric_log_columns:
+    - "total_price"
+    - "total_freight"
+    - "n_items"
+
+  # NOTE (known limitation carried over from Notebook 5/6):
+  # a StandardScaler was fitted and saved, but the final feature
+  # table used for training never actually applied it — the model
+  # was trained on log1p values WITHOUT scaling. The inference
+  # pipeline must match training exactly, so scaling is intentionally
+  # NOT applied here. See notebooks/eda_report.md / README for details.
+  apply_scaler: false
+
+  # Rare-category grouping threshold for customer_state (Notebook 5)
+  rare_state_min_count: 100
+
+  # Months considered "holiday season" (Notebook 5)
+  holiday_months: [11, 12]
+
+model:
+  type: "LogisticRegression"
+  random_state: 42
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
