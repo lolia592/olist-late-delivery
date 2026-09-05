@@ -1,0 +1,18 @@
+# Core data & ML — used by the inference pipeline (src/)
+pandas==3.0.5
+numpy==2.5.2
+scikit-learn==1.9.0
+joblib==1.5.3
+
+# Database access (used by data loading step, and by the API if it queries live data)
+SQLAlchemy==2.0.52
+psycopg2-binary==2.9.12
+
+# API serving
+fastapi==0.141.1
+pydantic==2.13.5
+uvicorn[standard]==0.52.4
+
+# Config & environment
+PyYAML==6.0.3
+python-dotenv==1.2.2

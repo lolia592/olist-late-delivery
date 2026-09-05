@@ -1,0 +1,11 @@
+-r base.txt
+
+# Needed only to re-run/re-explore the original notebooks (not used at inference time)
+xgboost==3.4.1
+matplotlib==3.11.1
+seaborn==0.13.2
+jupyterlab==4.6.3
+ipykernel==7.3.0
+
+# Testing & code quality (added progressively as we reach those steps)
+pytest
