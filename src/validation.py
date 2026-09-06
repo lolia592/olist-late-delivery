@@ -7,6 +7,7 @@ Raises a clear ValueError if something is wrong, instead of letting
 a bad value silently break the model downstream.
 """
 
+import math
 from datetime import datetime
 
 # The exact raw fields the feature pipeline needs — matches the
@@ -53,6 +54,14 @@ def validate_order(order: dict) -> None:
                 f"Field '{field}' has invalid type "
                 f"{type(order[field]).__name__}, expected {expected_type}"
             )
+
+    # 2.5. Reject NaN in numeric fields — NaN passes isinstance(float)
+    #      checks but silently breaks every downstream comparison and
+    #      the model itself, so it must be caught explicitly here.
+    numeric_fields = ("total_price", "total_freight")
+    for field in numeric_fields:
+        if isinstance(order[field], float) and math.isnan(order[field]):
+            raise ValueError(f"Field '{field}' cannot be NaN")
 
     # 3. Sanity checks on values (matches ranges seen in Notebook 4's EDA)
     if order["total_price"] <= 0:
