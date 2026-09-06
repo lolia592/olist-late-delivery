@@ -25,6 +25,10 @@ data/charts/*
 !models/.gitkeep
 !data/charts/.gitkeep
 
+# Logs
+logs/*
+!logs/.gitkeep
+
 # MLflow
 mlruns/
 

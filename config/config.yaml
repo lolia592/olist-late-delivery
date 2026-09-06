@@ -60,7 +60,12 @@ features:
 model:
   type: "LogisticRegression"
   random_state: 42
+  # Manual version tag for now — proper versioning via MLflow's
+  # model registry comes in a later step. This string just lets us
+  # log which "version" of the model produced a given prediction.
+  version: "v1-notebook6"
 
 logging:
   level: "INFO"
   format: "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+  file: "logs/app.log"
