@@ -9,3 +9,4 @@ ipykernel==7.3.0
 
 # Testing & code quality (added progressively as we reach those steps)
 pytest
+dvc==3.67.1
