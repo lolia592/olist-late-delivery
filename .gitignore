@@ -17,13 +17,19 @@ env/
 .env
 *.env
 
-# Data & model artifacts (will be tracked with DVC instead)
+# Data & model artifacts (tracked with DVC instead of git directly)
 data/processed/*
 models/*
 data/charts/*
 !data/processed/.gitkeep
 !models/.gitkeep
 !data/charts/.gitkeep
+!data/processed/*.dvc
+!models/*.dvc
+!data/charts/*.dvc
+!data/processed/.gitignore
+!models/.gitignore
+!data/charts/.gitignore
 
 # Logs
 logs/*
