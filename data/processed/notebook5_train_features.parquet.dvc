@@ -1,0 +1,5 @@
+outs:
+- md5: 1b7588f12425205de1230aa75d0ee5f7
+  size: 451777
+  hash: md5
+  path: notebook5_train_features.parquet

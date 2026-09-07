@@ -1,0 +1,5 @@
+outs:
+- md5: 6851139b1ed36c90bc34baf0925c52fc
+  size: 14326726
+  hash: md5
+  path: notebook2_labeled_table.parquet

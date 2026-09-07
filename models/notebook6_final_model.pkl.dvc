@@ -1,0 +1,5 @@
+outs:
+- md5: 478f8874d32d9b1bf0042895428b6726
+  size: 2287
+  hash: md5
+  path: notebook6_final_model.pkl
