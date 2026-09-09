@@ -1,8 +1,17 @@
 # Core data & ML — used by the inference pipeline (src/)
-pandas==3.0.5
-numpy==2.5.2
+# NOTE: numpy/scipy/pandas were downgraded from their original
+# versions (numpy 2.5.2, pandas 3.0.5) when great_expectations
+# was installed, because great_expectations pins numpy<2.0.0.
+# Verified afterwards that the model and pipeline still produce
+# identical results (see tests/verify_pipeline_matches_notebook.py).
+pandas==2.3.3
+numpy==1.26.4
+scipy==1.17.1
 scikit-learn==1.9.0
 joblib==1.5.3
+
+# Data validation — checks incoming data before it reaches the model
+great_expectations==0.18.22
 
 # Database access (used by data loading step, and by the API if it queries live data)
 SQLAlchemy==2.0.52
