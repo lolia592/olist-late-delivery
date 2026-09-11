@@ -95,3 +95,26 @@ Failures are split by severity:
 - **Warning** (a statistically unusual but still valid value, e.g.
   an unusually expensive order) → **logged**, and the prediction
   still proceeds.
+
+## Experiment tracking & model registry (MLflow)
+
+Training runs are logged with MLflow: parameters, metrics
+(accuracy, precision, recall, f1, roc_auc), and artifacts (the
+fitted encoder, scaler, rare-states list, and feature names) are
+recorded in `notebooks/Notebook6.ipynb`.
+
+The chosen model is registered in the MLflow Model Registry under
+`olist-late-delivery-model`, tagged with the `production` alias
+(MLflow's modern replacement for the deprecated stage-based system).
+`src/model_loader.py` loads the model directly from the registry —
+never from a local `.pkl` file — so promoting a new version never
+requires a code change.
+
+**Known limitation (to be addressed in the Docker step):** the
+MLflow tracking store (`mlflow.db`) and artifact store currently
+live on the local filesystem. Once the service is containerized,
+these need to be reachable from inside the container — either by
+mounting them as a volume in `docker-compose.yml`, or by running
+MLflow as its own service in the stack. This is deferred to that
+step, once the full container layout (API + database + MLflow) is
+decided together.
