@@ -118,3 +118,23 @@ mounting them as a volume in `docker-compose.yml`, or by running
 MLflow as its own service in the stack. This is deferred to that
 step, once the full container layout (API + database + MLflow) is
 decided together.
+
+## Testing
+
+The project uses `pytest`. Run the entire suite with a single command:
+
+```bash
+pytest
+```
+
+Tests are organized by type:
+- `tests/unit/` — pure function tests for preprocessing, feature
+  building, and validation logic (no I/O, no model).
+- `tests/data/` — schema, value ranges, missing values, and a
+  leakage check (no `order_id` appears in more than one split).
+- `tests/model/` — the model loads, predicts the right shape, and
+  behaves sensibly on known inputs; also confirms the feature
+  pipeline output is byte-for-byte identical to Notebook 5's saved
+  output on real data.
+- `tests/integration/` — end-to-end API route tests, added once
+  the API exists (Task 3's next step).
