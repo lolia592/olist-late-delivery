@@ -138,3 +138,33 @@ Tests are organized by type:
   output on real data.
 - `tests/integration/` — end-to-end API route tests, added once
   the API exists (Task 3's next step).
+
+## API (FastAPI)
+
+Run the service locally:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Interactive docs (try every route from the browser): `http://127.0.0.1:8000/docs`
+
+**Routes:**
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/health` | Liveness check |
+| GET | `/model-info` | Currently served model name, alias, type, version |
+| POST | `/predict` | Predict Late/On-time for a single order |
+| POST | `/predict/batch` | Predict for multiple orders in one request |
+
+Request/response shapes are enforced by Pydantic schemas
+(`app/schemas.py`). Malformed requests (wrong types, missing
+fields, out-of-range values) are rejected with a `422` response
+before reaching the pipeline. Requests that pass schema validation
+but fail deeper checks (e.g. an unknown state code, caught by
+Great Expectations inside `src/pipeline.py`) are also rejected
+with a `422` and a clear reason.
+
+All route logic is a thin wrapper around `src/pipeline.run_pipeline()` —
+no prediction logic is duplicated in the API layer.
