@@ -5,6 +5,14 @@ Checks that a batch of order data matches the expected schema
 (column types, ranges, allowed categories, missing rates) BEFORE
 it reaches the feature pipeline and the model.
 
+Expectations are split into two severities:
+  - CRITICAL: the data is structurally broken (nulls, unknown
+    category) — the request must be rejected, since no valid
+    features can be built from it.
+  - WARNING: the data is a statistical outlier but still usable
+    (e.g. an unusually large but plausible order) — logged, but
+    the request proceeds to prediction.
+
 This runs on a pandas DataFrame directly, using an in-memory
 ("ephemeral") Great Expectations context — no project folder or
 config files are created on disk. The expectations themselves are
@@ -26,6 +34,17 @@ VALID_STATES = [
     "RO", "RR", "RS", "SC", "SE", "SP", "TO",
 ]
 
+# Structural problems: the data cannot produce valid features at all.
+CRITICAL_EXPECTATION_TYPES = {
+    "expect_column_values_to_not_be_null",
+    "expect_column_values_to_be_in_set",
+}
+
+# Statistical outliers: unusual, but the model can still score them.
+WARNING_EXPECTATION_TYPES = {
+    "expect_column_values_to_be_between",
+}
+
 
 def validate_dataframe(df):
     """
@@ -42,8 +61,9 @@ def validate_dataframe(df):
     -------
     dict
         {
-            "success": bool,
-            "failed_expectations": list[str],  # human-readable reasons
+            "is_valid": bool,                  # False if any CRITICAL check failed
+            "critical_failures": list[str],    # must reject the request
+            "warning_failures": list[str],     # logged, request still proceeds
         }
     """
     context = gx.get_context(mode="ephemeral")
@@ -56,15 +76,18 @@ def validate_dataframe(df):
         create_expectation_suite_with_name="order_expectations",
     )
 
-    # --- Column types & missing rates ---
+    # --- Column types & missing rates (CRITICAL) ---
     validator.expect_column_values_to_not_be_null("total_price")
     validator.expect_column_values_to_not_be_null("total_freight")
     validator.expect_column_values_to_not_be_null("n_items")
     validator.expect_column_values_to_not_be_null("customer_state")
     validator.expect_column_values_to_not_be_null("order_purchase_timestamp")
 
-    # --- Ranges (based on real min/max seen in training data,
-    #     with a wider ceiling to allow for future, larger orders) ---
+    # --- Allowed categories (CRITICAL) ---
+    validator.expect_column_values_to_be_in_set("customer_state", VALID_STATES)
+
+    # --- Ranges (WARNING — statistical outliers, based on real
+    #     min/max seen in training data, with a wider ceiling) ---
     validator.expect_column_values_to_be_between(
         "total_price", min_value=0.01, max_value=20000
     )
@@ -75,25 +98,35 @@ def validate_dataframe(df):
         "n_items", min_value=1, max_value=30
     )
 
-    # --- Allowed categories ---
-    validator.expect_column_values_to_be_in_set("customer_state", VALID_STATES)
-
     results = validator.validate()
 
-    failed_expectations = [
-        r["expectation_config"]["kwargs"].get("column", "unknown")
-        + ": "
-        + r["expectation_config"]["expectation_type"]
-        for r in results["results"]
-        if not r["success"]
-    ]
+    critical_failures = []
+    warning_failures = []
 
-    if not results["success"]:
-        logger.warning(f"Data validation failed | failed_checks={failed_expectations}")
-    else:
-        logger.info("Data validation passed")
+    for r in results["results"]:
+        if r["success"]:
+            continue
+
+        expectation_type = r["expectation_config"]["expectation_type"]
+        column = r["expectation_config"]["kwargs"].get("column", "unknown")
+        message = f"{column}: {expectation_type}"
+
+        if expectation_type in CRITICAL_EXPECTATION_TYPES:
+            critical_failures.append(message)
+        else:
+            warning_failures.append(message)
+
+    is_valid = len(critical_failures) == 0
+
+    if critical_failures:
+        logger.warning(f"Critical data validation failure | issues={critical_failures}")
+    if warning_failures:
+        logger.warning(f"Data quality warning (non-blocking) | issues={warning_failures}")
+    if is_valid and not warning_failures:
+        logger.info("Data validation passed with no issues")
 
     return {
-        "success": results["success"],
-        "failed_expectations": failed_expectations,
+        "is_valid": is_valid,
+        "critical_failures": critical_failures,
+        "warning_failures": warning_failures,
     }
