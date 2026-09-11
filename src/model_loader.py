@@ -1,19 +1,24 @@
 """
-Loads the trained model artifact.
+Loads the trained model artifact from the MLflow Model Registry.
 
-The model is loaded once, from the exact path in config.yaml, and
-is never re-trained or re-fit here — this module only ever reads
-what Notebook 6 already produced.
+The model is loaded once, from the registry (not a local notebook
+folder), using the model's "production" alias — so the service
+always uses whichever version has been promoted, without any
+code changes when a new version is promoted.
 """
 
-import joblib
+import mlflow
+import mlflow.sklearn
 
 from src.config import settings
 
-_MODEL_PATH = settings.get("paths", "model")
+mlflow.set_tracking_uri(settings.get("mlflow", "tracking_uri"))
+
+_MODEL_NAME = settings.get("mlflow", "model_name")
+_MODEL_ALIAS = settings.get("mlflow", "model_alias")
 
 # Loaded once, when this module is first imported.
-_model = joblib.load(_MODEL_PATH)
+_model = mlflow.sklearn.load_model(f"models:/{_MODEL_NAME}@{_MODEL_ALIAS}")
 
 
 def get_model():

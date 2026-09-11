@@ -25,3 +25,5 @@ uvicorn[standard]==0.52.4
 # Config & environment
 PyYAML==6.0.3
 python-dotenv==1.2.2
+# Experiment tracking & model registry
+mlflow==3.16.0

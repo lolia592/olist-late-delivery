@@ -69,3 +69,12 @@ logging:
   level: "INFO"
   format: "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
   file: "logs/app.log"
+
+mlflow:
+  tracking_uri: "sqlite:///mlflow.db"
+  experiment_name: "olist-late-delivery"
+  model_name: "olist-late-delivery-model"
+  # Using MLflow's modern "alias" system instead of the deprecated
+  # stage-based system (stages are being removed in a future MLflow
+  # major release — see model registry migration guide).
+  model_alias: "production"
