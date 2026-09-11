@@ -66,3 +66,32 @@ To reproduce the notebook's results exactly, the inference pipeline **does not a
 ## Status
 
 🚧 Work in progress — repository structure and configuration are in place. Pipeline modules (`src/`), tests, FastAPI service, Docker, MLflow, DVC, and CI/CD are being added incrementally.
+## Data versioning (DVC)
+
+All data and model artifacts (`data/processed/*.parquet`,
+`models/*.pkl`, `models/*.csv`) are tracked with DVC instead of
+git directly. Git stores only small `.dvc` pointer files; the
+actual data lives in a DVC remote.
+
+```bash
+dvc pull   # fetch the real data/model files
+dvc push   # after adding/updating a tracked artifact
+```
+
+The current remote is a local folder (`~/dvc-storage`) for this
+training exercise — swapping it for S3/GCS in production only
+requires changing `.dvc/config`, no code changes.
+
+## Data validation (Great Expectations)
+
+Before every prediction, incoming order data is checked against
+expectations defined in `src/data_validation.py` (column types,
+value ranges, allowed states, missing rates — based on the real
+ranges observed in Notebook 4's EDA).
+
+Failures are split by severity:
+- **Critical** (null values, unknown state code) → the order is
+  **rejected** with a clear `ValueError`.
+- **Warning** (a statistically unusual but still valid value, e.g.
+  an unusually expensive order) → **logged**, and the prediction
+  still proceeds.
