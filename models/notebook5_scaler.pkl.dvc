@@ -1,5 +1,0 @@
-outs:
-- md5: aaabc6e79fc881a49e69fbb1b6a7e8c0
-  size: 943
-  hash: md5
-  path: notebook5_scaler.pkl
