@@ -232,3 +232,28 @@ excluded from CI and run locally / in Docker instead:
   and inside Docker Compose, where volumes are mounted consistently).
 
 Run the full 53-test suite locally or via `docker compose exec api pytest`.
+
+## Monitoring
+
+### Metrics
+
+The service exposes Prometheus-format metrics at `GET /metrics`:
+
+| Metric | Type | What it tracks |
+|---|---|---|
+| `prediction_requests_total` | Counter | Total prediction requests received |
+| `prediction_errors_total{error_type}` | Counter | Failed requests, split into `invalid_input` (bad data — expected) vs `internal_error` (unexpected bugs) |
+| `prediction_latency_seconds` | Histogram | End-to-end request latency distribution |
+| `predictions_by_class_total{prediction}` | Counter | Predictions per class ("Late"/"On-time") — the basis for spotting prediction drift over time |
+
+Point a real Prometheus server at `/metrics` to scrape and graph these in Grafana.
+
+### Prediction logging (for future evaluation)
+
+Every prediction is persisted to `predictions.db` (SQLite, git-ignored — it grows continuously and is runtime state, not code) via `src/prediction_log.py`. Each row stores the input, the prediction, the probability, the model version, and an `actual_outcome` column left `NULL` at prediction time.
+
+Once an order's real delivery date is known, `actual_outcome` can be backfilled and compared against the original prediction — this is what enables measuring real-world model accuracy over time, not just accuracy on the original test set (a separate evaluation job, out of scope for this task).
+
+### Alerting
+
+See [`docs/ALERTING.md`](docs/ALERTING.md) for the documented decision on what conditions should trigger an alert (error rate, latency, prediction drift, uptime) and why. No alerting infrastructure is wired up — this task calls for the decision to be made and written down, which is what that document is.
