@@ -13,10 +13,7 @@ from sqlalchemy import create_engine
 from src.config import settings
 
 _db = settings.db
-_DB_URL = (
-    f"postgresql://{_db['user']}:{_db['password']}"
-    f"@{_db['host']}:{_db['port']}/{_db['name']}"
-)
+_DB_URL = f"postgresql://{_db['user']}:{_db['password']}@{_db['host']}:{_db['port']}/{_db['name']}"
 
 # Created once; SQLAlchemy manages a connection pool internally,
 # so we don't need to open/close a raw connection every call.

@@ -48,8 +48,6 @@ def clean_order(order: dict) -> dict:
     if "order_purchase_timestamp" in cleaned and isinstance(
         cleaned["order_purchase_timestamp"], str
     ):
-        cleaned["order_purchase_timestamp"] = cleaned[
-            "order_purchase_timestamp"
-        ].strip()
+        cleaned["order_purchase_timestamp"] = cleaned["order_purchase_timestamp"].strip()
 
     return cleaned

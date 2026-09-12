@@ -70,25 +70,19 @@ def run_pipeline(order: dict) -> dict:
         # are logged as warnings and the request proceeds.
         gx_result = validate_dataframe(pd.DataFrame([cleaned]))
         if not gx_result["is_valid"]:
-            raise ValueError(
-                f"Order failed data quality checks: {gx_result['critical_failures']}"
-            )
+            raise ValueError(f"Order failed data quality checks: {gx_result['critical_failures']}")
 
         result = predict_order(cleaned)
 
     except ValueError as e:
         latency_ms = (time.perf_counter() - start_time) * 1000
-        logger.warning(
-            f"Rejected invalid order | reason={e} | latency_ms={latency_ms:.2f}"
-        )
+        logger.warning(f"Rejected invalid order | reason={e} | latency_ms={latency_ms:.2f}")
         raise
 
     except Exception as e:
         latency_ms = (time.perf_counter() - start_time) * 1000
         logger.exception(f"Unexpected pipeline failure | latency_ms={latency_ms:.2f}")
-        raise PipelineError(
-            "An unexpected error occurred while processing the order."
-        ) from e
+        raise PipelineError("An unexpected error occurred while processing the order.") from e
 
     latency_ms = (time.perf_counter() - start_time) * 1000
     result["model_version"] = _MODEL_VERSION

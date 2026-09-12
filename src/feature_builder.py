@@ -81,9 +81,7 @@ def build_features(orders: pd.DataFrame) -> pd.DataFrame:
 
     # Apply the SAVED encoder — transform only, never fit.
     encoded = _encoder.transform(df[["customer_state_grouped"]])
-    encoded_df = pd.DataFrame(
-        encoded, columns=_encoder.get_feature_names_out(), index=df.index
-    )
+    encoded_df = pd.DataFrame(encoded, columns=_encoder.get_feature_names_out(), index=df.index)
 
     numeric_part = df[
         [f"{c}_log" for c in _LOG_COLUMNS]

@@ -75,8 +75,7 @@ def validate_order(order: dict) -> None:
 
     if len(order["customer_state"]) != 2:
         raise ValueError(
-            f"customer_state must be a 2-letter state code, "
-            f"got '{order['customer_state']}'"
+            f"customer_state must be a 2-letter state code, got '{order['customer_state']}'"
         )
 
     # 4. If the timestamp is a string, make sure it can actually be parsed

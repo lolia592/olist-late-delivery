@@ -33,17 +33,13 @@ def test_log_transform_is_correct():
 
 
 def test_time_features_extracted_correctly():
-    features = build_features(
-        _make_order(order_purchase_timestamp="2026-11-15 10:00:00")
-    )
+    features = build_features(_make_order(order_purchase_timestamp="2026-11-15 10:00:00"))
     assert features["purchase_month"].iloc[0] == 11
     assert features["is_holiday_season"].iloc[0] == 1
 
 
 def test_non_holiday_month_flagged_correctly():
-    features = build_features(
-        _make_order(order_purchase_timestamp="2026-06-15 10:00:00")
-    )
+    features = build_features(_make_order(order_purchase_timestamp="2026-06-15 10:00:00"))
     assert features["purchase_month"].iloc[0] == 6
     assert features["is_holiday_season"].iloc[0] == 0
 

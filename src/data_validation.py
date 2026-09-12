@@ -112,12 +112,8 @@ def validate_dataframe(df):
 
     # --- Ranges (WARNING — statistical outliers, based on real
     #     min/max seen in training data, with a wider ceiling) ---
-    validator.expect_column_values_to_be_between(
-        "total_price", min_value=0.01, max_value=20000
-    )
-    validator.expect_column_values_to_be_between(
-        "total_freight", min_value=0, max_value=1500
-    )
+    validator.expect_column_values_to_be_between("total_price", min_value=0.01, max_value=20000)
+    validator.expect_column_values_to_be_between("total_freight", min_value=0, max_value=1500)
     validator.expect_column_values_to_be_between("n_items", min_value=1, max_value=30)
 
     results = validator.validate()
@@ -143,9 +139,7 @@ def validate_dataframe(df):
     if critical_failures:
         logger.warning(f"Critical data validation failure | issues={critical_failures}")
     if warning_failures:
-        logger.warning(
-            f"Data quality warning (non-blocking) | issues={warning_failures}"
-        )
+        logger.warning(f"Data quality warning (non-blocking) | issues={warning_failures}")
     if is_valid and not warning_failures:
         logger.info("Data validation passed with no issues")
 

@@ -66,9 +66,7 @@ def predict_batch(batch: BatchOrderRequest):
         try:
             result = run_pipeline(order.model_dump())
         except ValueError as e:
-            raise HTTPException(
-                status_code=422, detail=f"Order {order.model_dump()} rejected: {e}"
-            )
+            raise HTTPException(status_code=422, detail=f"Order {order.model_dump()} rejected: {e}")
         except PipelineError as e:
             raise HTTPException(status_code=500, detail=str(e))
 
