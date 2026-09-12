@@ -53,7 +53,8 @@ def test_known_state_one_hot_encoded_correctly():
     assert features["customer_state_grouped_SP"].iloc[0] == 1.0
     # Every other state column must be 0.
     other_state_cols = [
-        c for c in features.columns
+        c
+        for c in features.columns
         if c.startswith("customer_state_grouped_") and c != "customer_state_grouped_SP"
     ]
     assert (features[other_state_cols] == 0.0).all().all()
@@ -69,6 +70,7 @@ def test_rare_or_unknown_state_maps_to_other():
 
 def test_column_order_matches_saved_feature_names():
     import joblib
+
     expected_order = joblib.load("models/notebook5_feature_names.pkl")
     features = build_features(_make_order())
     assert list(features.columns) == expected_order

@@ -7,9 +7,9 @@ No transformer is ever re-fit here — everything is loaded from the
 fitted artifacts saved in Notebook 5.
 """
 
+import joblib
 import numpy as np
 import pandas as pd
-import joblib
 
 from src.config import settings
 

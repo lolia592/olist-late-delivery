@@ -13,9 +13,8 @@ and rely on this module having already set things up.
 """
 
 import logging
-from pathlib import Path
 
-from src.config import settings, PROJECT_ROOT
+from src.config import PROJECT_ROOT, settings
 
 _configured = False
 

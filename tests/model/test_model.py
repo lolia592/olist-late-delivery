@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.model_loader import get_model
 from src.feature_builder import build_features
+from src.model_loader import get_model
 
 
 @pytest.fixture(scope="module")
@@ -26,12 +26,24 @@ def test_model_has_expected_classes(model):
 
 
 def test_predict_returns_one_label_per_row(model):
-    orders = pd.DataFrame([
-        {"total_price": 149.90, "total_freight": 18.50, "n_items": 2,
-         "order_purchase_timestamp": "2026-09-05 14:30:00", "customer_state": "SP"},
-        {"total_price": 85.00, "total_freight": 16.79, "n_items": 1,
-         "order_purchase_timestamp": "2026-06-10 09:00:00", "customer_state": "RJ"},
-    ])
+    orders = pd.DataFrame(
+        [
+            {
+                "total_price": 149.90,
+                "total_freight": 18.50,
+                "n_items": 2,
+                "order_purchase_timestamp": "2026-09-05 14:30:00",
+                "customer_state": "SP",
+            },
+            {
+                "total_price": 85.00,
+                "total_freight": 16.79,
+                "n_items": 1,
+                "order_purchase_timestamp": "2026-06-10 09:00:00",
+                "customer_state": "RJ",
+            },
+        ]
+    )
     features = build_features(orders)
     predictions = model.predict(features)
 
@@ -40,10 +52,17 @@ def test_predict_returns_one_label_per_row(model):
 
 
 def test_predict_proba_returns_valid_probabilities(model):
-    orders = pd.DataFrame([
-        {"total_price": 149.90, "total_freight": 18.50, "n_items": 2,
-         "order_purchase_timestamp": "2026-09-05 14:30:00", "customer_state": "SP"},
-    ])
+    orders = pd.DataFrame(
+        [
+            {
+                "total_price": 149.90,
+                "total_freight": 18.50,
+                "n_items": 2,
+                "order_purchase_timestamp": "2026-09-05 14:30:00",
+                "customer_state": "SP",
+            },
+        ]
+    )
     features = build_features(orders)
     probabilities = model.predict_proba(features)
 
@@ -63,12 +82,18 @@ def test_holiday_season_order_has_higher_late_risk_than_regular(model):
     the seasonal pattern observed in Notebook 4's EDA.
     """
     base_order = {
-        "total_price": 150.0, "total_freight": 20.0, "n_items": 2,
+        "total_price": 150.0,
+        "total_freight": 20.0,
+        "n_items": 2,
         "customer_state": "SP",
     }
 
-    regular_month = pd.DataFrame([{**base_order, "order_purchase_timestamp": "2026-06-15 10:00:00"}])
-    holiday_month = pd.DataFrame([{**base_order, "order_purchase_timestamp": "2026-11-15 10:00:00"}])
+    regular_month = pd.DataFrame(
+        [{**base_order, "order_purchase_timestamp": "2026-06-15 10:00:00"}]
+    )
+    holiday_month = pd.DataFrame(
+        [{**base_order, "order_purchase_timestamp": "2026-11-15 10:00:00"}]
+    )
 
     late_idx = list(model.classes_).index("Late")
     p_regular = model.predict_proba(build_features(regular_month))[0, late_idx]

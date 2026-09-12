@@ -6,7 +6,6 @@ automatically — malformed requests are rejected with a clear 422
 error before they ever reach our route functions.
 """
 
-from datetime import datetime
 
 from pydantic import BaseModel, Field
 

@@ -17,12 +17,12 @@ import time
 
 import pandas as pd
 
-from src.logger import setup_logging
-from src.preprocessing import clean_order
-from src.data_validation import validate_dataframe
-from src.predictor import predict_order
-from src.exceptions import PipelineError
 from src.config import settings
+from src.data_validation import validate_dataframe
+from src.exceptions import PipelineError
+from src.logger import setup_logging
+from src.predictor import predict_order
+from src.preprocessing import clean_order
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -85,9 +85,7 @@ def run_pipeline(order: dict) -> dict:
 
     except Exception as e:
         latency_ms = (time.perf_counter() - start_time) * 1000
-        logger.exception(
-            f"Unexpected pipeline failure | latency_ms={latency_ms:.2f}"
-        )
+        logger.exception(f"Unexpected pipeline failure | latency_ms={latency_ms:.2f}")
         raise PipelineError(
             "An unexpected error occurred while processing the order."
         ) from e

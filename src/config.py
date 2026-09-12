@@ -7,8 +7,8 @@ from — so there is exactly one source of truth for paths and
 parameters, and no hardcoded values anywhere else in the code.
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 import yaml
 from dotenv import load_dotenv

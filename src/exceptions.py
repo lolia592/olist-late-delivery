@@ -13,4 +13,4 @@ code (the API, the CLI) tell the difference between:
 class PipelineError(Exception):
     """Raised when something unexpected fails inside the pipeline
     (not a bad input — a bug, a corrupted artifact, etc.)."""
-    pass
+

@@ -8,9 +8,9 @@ without ever re-fitting anything.
 
 import pandas as pd
 
-from src.validation import validate_order
 from src.feature_builder import build_features
 from src.model_loader import get_model
+from src.validation import validate_order
 
 _model = get_model()
 

@@ -29,9 +29,33 @@ logger = logging.getLogger(__name__)
 # The 27 Brazilian state codes actually present in the training data
 # (data/processed/notebook3_train.parquet).
 VALID_STATES = [
-    "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA",
-    "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN",
-    "RO", "RR", "RS", "SC", "SE", "SP", "TO",
+    "AC",
+    "AL",
+    "AM",
+    "AP",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MG",
+    "MS",
+    "MT",
+    "PA",
+    "PB",
+    "PE",
+    "PI",
+    "PR",
+    "RJ",
+    "RN",
+    "RO",
+    "RR",
+    "RS",
+    "SC",
+    "SE",
+    "SP",
+    "TO",
 ]
 
 # Structural problems: the data cannot produce valid features at all.
@@ -94,9 +118,7 @@ def validate_dataframe(df):
     validator.expect_column_values_to_be_between(
         "total_freight", min_value=0, max_value=1500
     )
-    validator.expect_column_values_to_be_between(
-        "n_items", min_value=1, max_value=30
-    )
+    validator.expect_column_values_to_be_between("n_items", min_value=1, max_value=30)
 
     results = validator.validate()
 
@@ -121,7 +143,9 @@ def validate_dataframe(df):
     if critical_failures:
         logger.warning(f"Critical data validation failure | issues={critical_failures}")
     if warning_failures:
-        logger.warning(f"Data quality warning (non-blocking) | issues={warning_failures}")
+        logger.warning(
+            f"Data quality warning (non-blocking) | issues={warning_failures}"
+        )
     if is_valid and not warning_failures:
         logger.info("Data validation passed with no issues")
 

@@ -10,16 +10,16 @@ pipeline, and shapes the response.
 from fastapi import FastAPI, HTTPException
 
 from app.schemas import (
-    OrderRequest,
     BatchOrderRequest,
-    PredictionResponse,
     BatchPredictionResponse,
     HealthResponse,
     ModelInfoResponse,
+    OrderRequest,
+    PredictionResponse,
 )
-from src.pipeline import run_pipeline
 from src.config import settings
 from src.exceptions import PipelineError
+from src.pipeline import run_pipeline
 
 app = FastAPI(
     title="Olist Late Delivery Prediction API",

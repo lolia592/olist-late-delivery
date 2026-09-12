@@ -16,8 +16,13 @@ def test_features_match_notebook5_output_exactly():
     actual = pd.read_parquet("data/processed/notebook5_train_features.parquet")
 
     sample_raw = raw[
-        ["total_price", "total_freight", "n_items",
-         "order_purchase_timestamp", "customer_state"]
+        [
+            "total_price",
+            "total_freight",
+            "n_items",
+            "order_purchase_timestamp",
+            "customer_state",
+        ]
     ].head(10)
 
     our_output = build_features(sample_raw)
@@ -25,11 +30,14 @@ def test_features_match_notebook5_output_exactly():
     actual_sample = actual.drop(columns=["label"]).head(10)
     actual_sample = actual_sample[our_output.columns]
 
-    assert our_output.shape == actual_sample.shape, \
+    assert our_output.shape == actual_sample.shape, (
         "Output shape does not match Notebook 5's output"
+    )
 
-    assert list(our_output.columns) == list(actual_sample.columns), \
+    assert list(our_output.columns) == list(actual_sample.columns), (
         "Column names/order do not match Notebook 5's output"
+    )
 
-    assert np.allclose(our_output.values, actual_sample.values, atol=1e-8), \
+    assert np.allclose(our_output.values, actual_sample.values, atol=1e-8), (
         "Values differ from Notebook 5's actual output"
+    )

@@ -1,0 +1,11 @@
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+# RUF012: Pydantic's `class Config` pattern intentionally uses plain
+#         dicts for json_schema_extra — this is the standard, documented
+#         way to add OpenAPI examples, not a real mutable-default bug.
+# TRY004: validate_order() intentionally raises ValueError (not TypeError)
+#         for every validation failure, including type mismatches, so
+#         callers can catch a single exception type for all bad input.
+ignore = ["RUF012", "TRY004"]
