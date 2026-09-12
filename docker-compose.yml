@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/home/lolia/olist-eda/models
+      - ./mlflow.db:/home/lolia/olist-eda/mlflow.db
+      - ./mlruns:/home/lolia/olist-eda/mlruns
+    depends_on:
+      - db
+
+volumes:
+  db_data:
