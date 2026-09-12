@@ -7,9 +7,10 @@ prediction into one function. This is what the CLI and the API
 (built later) both call — neither of them talks to the individual
 modules directly.
 
-Logs every request (input, output, latency, model version) and
-handles bad input and unexpected failures without letting the
-whole service crash on a single bad request.
+Logs every request (input, output, latency, model version),
+records Prometheus metrics (request count, latency, errors,
+prediction distribution), and persists every prediction to a
+durable log for later evaluation.
 """
 
 import logging
@@ -21,6 +22,8 @@ from src.config import settings
 from src.data_validation import validate_dataframe
 from src.exceptions import PipelineError
 from src.logger import setup_logging
+from src.metrics import ERROR_COUNT, PREDICTION_COUNT, REQUEST_COUNT, REQUEST_LATENCY
+from src.prediction_log import log_prediction
 from src.predictor import predict_order
 from src.preprocessing import clean_order
 
@@ -59,15 +62,12 @@ def run_pipeline(order: dict) -> dict:
         should show a generic error message, not these details.
     """
     start_time = time.perf_counter()
+    REQUEST_COUNT.inc()
     logger.info(f"Received order for prediction | input={order}")
 
     try:
         cleaned = clean_order(order)
 
-        # Structural data quality check (Great Expectations).
-        # Critical issues (nulls, unknown category) reject the
-        # request. Statistical outliers (unusual but valid ranges)
-        # are logged as warnings and the request proceeds.
         gx_result = validate_dataframe(pd.DataFrame([cleaned]))
         if not gx_result["is_valid"]:
             raise ValueError(f"Order failed data quality checks: {gx_result['critical_failures']}")
@@ -76,20 +76,29 @@ def run_pipeline(order: dict) -> dict:
 
     except ValueError as e:
         latency_ms = (time.perf_counter() - start_time) * 1000
+        ERROR_COUNT.labels(error_type="invalid_input").inc()
+        REQUEST_LATENCY.observe(latency_ms / 1000)
         logger.warning(f"Rejected invalid order | reason={e} | latency_ms={latency_ms:.2f}")
         raise
 
     except Exception as e:
         latency_ms = (time.perf_counter() - start_time) * 1000
+        ERROR_COUNT.labels(error_type="internal_error").inc()
+        REQUEST_LATENCY.observe(latency_ms / 1000)
         logger.exception(f"Unexpected pipeline failure | latency_ms={latency_ms:.2f}")
         raise PipelineError("An unexpected error occurred while processing the order.") from e
 
     latency_ms = (time.perf_counter() - start_time) * 1000
     result["model_version"] = _MODEL_VERSION
 
+    PREDICTION_COUNT.labels(prediction=result["prediction"]).inc()
+    REQUEST_LATENCY.observe(latency_ms / 1000)
+
     logger.info(
         f"Prediction complete | output={result} | "
         f"latency_ms={latency_ms:.2f} | model_version={_MODEL_VERSION}"
     )
+
+    log_prediction(order=cleaned, result=result)
 
     return result

@@ -27,3 +27,6 @@ PyYAML==6.0.3
 python-dotenv==1.2.2
 # Experiment tracking & model registry
 mlflow==3.16.0
+
+# Monitoring
+prometheus-client==0.26.0

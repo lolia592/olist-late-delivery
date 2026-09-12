@@ -39,3 +39,6 @@ logs/*
 .vscode/
 .idea/
 
+
+# Prediction log database (grows continuously, never committed)
+predictions.db
