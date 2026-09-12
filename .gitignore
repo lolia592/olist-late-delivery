@@ -39,4 +39,3 @@ logs/*
 .vscode/
 .idea/
 
-# MLflow local tracking (sqlite db + artifact store)
