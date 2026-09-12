@@ -168,3 +168,31 @@ with a `422` and a clear reason.
 
 All route logic is a thin wrapper around `src/pipeline.run_pipeline()` —
 no prediction logic is duplicated in the API layer.
+
+## Running with Docker
+
+The entire stack (API + a fresh Postgres database) starts with a
+single command on a clean machine:
+
+```bash
+docker compose up --build
+```
+
+The API is then available at `http://localhost:8000` (Postgres on
+`localhost:5433`, to avoid clashing with any local Postgres already
+running on the default port).
+
+**Design notes:**
+- The image only contains application code (`app/`, `src/`,
+  `config/`) — no notebooks, no data, no models baked in, keeping
+  it small.
+- Model artifacts and the MLflow tracking database are mounted as
+  volumes (`models/`, `mlflow.db`, `mlruns/`) rather than copied
+  into the image, so a new model version doesn't require rebuilding
+  the image.
+- Secrets and connection strings come from `.env` (never committed)
+  via `env_file` in `docker-compose.yml`.
+- The container's `WORKDIR` matches the host's absolute project
+  path. This is required because MLflow's local file store records
+  absolute artifact paths at logging time; matching paths let the
+  container resolve them without any translation.
