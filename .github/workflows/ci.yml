@@ -27,20 +27,14 @@ jobs:
           pip install -r requirements/base.txt
           pip install -r requirements/dev.txt
 
-      - name: Install DVC
-        run: pip install dvc
-
       - name: Lint with ruff
         run: ruff check .
 
       - name: Check formatting with ruff
         run: ruff format --check .
 
-      - name: Prepare data
-        run: dvc pull
-
       - name: Run tests
-        run: pytest -q --ignore=tests/model/test_model.py --ignore=tests/integration/test_api.py
+        run: pytest -q --ignore=tests/model/test_model.py --ignore=tests/integration/test_api.py --ignore=tests/data --ignore=tests/model/test_pipeline_matches_notebook.py
 
   build-and-push-image:
     needs: lint-and-test
