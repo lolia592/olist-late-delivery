@@ -27,6 +27,9 @@ jobs:
           pip install -r requirements/base.txt
           pip install -r requirements/dev.txt
 
+      - name: Install DVC
+        run: pip install dvc
+
       - name: Lint with ruff
         run: ruff check .
 
@@ -34,7 +37,7 @@ jobs:
         run: ruff format --check .
 
       - name: Prepare data
-        run: python -m src.data.make_dataset
+        run: dvc pull
 
       - name: Run tests
         run: pytest -q --ignore=tests/model/test_model.py --ignore=tests/integration/test_api.py
