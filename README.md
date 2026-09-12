@@ -214,3 +214,21 @@ excluded from CI and run locally / in Docker instead:
   and inside Docker Compose, where volumes are mounted consistently).
 
 Run the full 53-test suite locally or via `docker compose exec api pytest`.
+
+## CI test coverage (updated)
+
+GitHub Actions runs `pytest` on `tests/unit/` only (26 tests: 
+preprocessing, feature building, validation). The following are
+excluded from CI and run locally / in Docker instead:
+
+- `tests/data/` and `tests/model/test_pipeline_matches_notebook.py`
+  — read `data/processed/*.parquet`, which are DVC-tracked and not
+  present in a fresh CI checkout (the CI runner has no access to
+  the local DVC remote).
+- `tests/model/test_model.py` and `tests/integration/test_api.py`
+  — import `src.model_loader`, which loads the model from MLflow's
+  registry. MLflow's local file store records absolute host paths
+  that don't resolve on GitHub's runners (they do resolve locally
+  and inside Docker Compose, where volumes are mounted consistently).
+
+Run the full 53-test suite locally or via `docker compose exec api pytest`.
