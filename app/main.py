@@ -8,6 +8,8 @@ pipeline, and shapes the response.
 """
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import Response
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 from app.schemas import (
     BatchOrderRequest,
@@ -73,3 +75,9 @@ def predict_batch(batch: BatchOrderRequest):
         predictions.append(PredictionResponse(**result))
 
     return BatchPredictionResponse(predictions=predictions)
+
+
+@app.get("/metrics", tags=["Monitoring"])
+def metrics():
+    """Expose Prometheus metrics for scraping."""
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
