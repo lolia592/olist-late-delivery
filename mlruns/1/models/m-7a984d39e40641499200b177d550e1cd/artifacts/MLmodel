@@ -1,0 +1,23 @@
+artifact_path: /home/lolia/olist-eda/mlruns/1/models/m-7a984d39e40641499200b177d550e1cd/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.skops
+    predict_fn: predict
+    python_version: 3.14.4
+  sklearn:
+    code: null
+    pickled_model: model.skops
+    serialization_format: skops
+    sklearn_version: 1.9.0
+    skops_trusted_types: null
+mlflow_version: 3.16.0
+model_id: m-7a984d39e40641499200b177d550e1cd
+model_size_bytes: 18548
+model_uuid: m-7a984d39e40641499200b177d550e1cd
+prompts: null
+run_id: 9464d799d9cd4b36ac4823c1c3307b2c
+utc_time_created: '2026-09-12 05:56:02.349726'

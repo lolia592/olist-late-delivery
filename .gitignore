@@ -31,8 +31,6 @@ data/charts/*
 logs/*
 !logs/.gitkeep
 
-# MLflow
-mlruns/
 
 # OS
 .DS_Store
@@ -42,5 +40,3 @@ mlruns/
 .idea/
 
 # MLflow local tracking (sqlite db + artifact store)
-mlflow.db
-mlartifacts/
