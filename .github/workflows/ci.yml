@@ -33,6 +33,9 @@ jobs:
       - name: Check formatting with ruff
         run: ruff format --check .
 
+      - name: Prepare data
+        run: python -m src.data.make_dataset
+
       - name: Run tests
         run: pytest -q --ignore=tests/model/test_model.py --ignore=tests/integration/test_api.py
 
