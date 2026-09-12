@@ -34,7 +34,7 @@ jobs:
         run: ruff format --check .
 
       - name: Run tests
-        run: pytest -q -m "not requires_mlflow"
+        run: pytest -q --ignore=tests/model/test_model.py --ignore=tests/integration/test_api.py
 
   build-and-push-image:
     needs: lint-and-test
