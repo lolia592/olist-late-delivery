@@ -10,6 +10,8 @@ import pytest
 from src.feature_builder import build_features
 from src.model_loader import get_model
 
+pytestmark = pytest.mark.requires_mlflow
+
 
 @pytest.fixture(scope="module")
 def model():

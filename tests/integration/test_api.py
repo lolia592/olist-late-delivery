@@ -6,9 +6,12 @@ needing a live uvicorn server — every request goes through the
 real routes, schemas, and the full src/pipeline.py logic.
 """
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+
+pytestmark = pytest.mark.requires_mlflow
 
 client = TestClient(app)
 
