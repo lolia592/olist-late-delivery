@@ -5,35 +5,39 @@ Predicts whether an order will be delivered **Late** or **On-time**, based on or
 This repository takes the model and feature-engineering logic developed in `notebooks/` (Notebooks 1–6) and turns it into a full production system: a reproducible inference pipeline, a REST API, containerization, CI/CD, and monitoring. Training stays in the notebooks — this repo only serves the model that comes out of them.
 
 ## Project structure
+
+```
 .
-├── app/ # FastAPI application (main.py, schemas.py)
-├── config/ # config.yaml — all paths and parameters, no hardcoded values in code
+├── app/                     # FastAPI application (main.py, schemas.py)
+├── config/                  # config.yaml — all paths and parameters, no hardcoded values in code
 ├── data/
-│ ├── processed/ # parquet artifacts from Notebooks 1, 2, 3, 5 (DVC-tracked)
-│ └── charts/ # saved EDA charts from Notebook 4
+│   ├── processed/           # parquet artifacts from Notebooks 1, 2, 3, 5 (DVC-tracked)
+│   └── charts/               # saved EDA charts from Notebook 4
 ├── docs/
-│ └── ALERTING.md # documented alerting policy
-├── logs/ # app.log (git-ignored)
-├── models/ # trained model + fitted transformers (Notebooks 5 & 6 outputs)
-├── notebooks/ # original Notebooks 1–6 (exploration + training — not modified)
+│   └── ALERTING.md          # documented alerting policy
+├── logs/                     # app.log (git-ignored)
+├── models/                   # trained model + fitted transformers (Notebooks 5 & 6 outputs)
+├── notebooks/                 # original Notebooks 1–6 (exploration + training — not modified)
 ├── scripts/
-│ └── check_everything.sh # one-command health check for the whole project
-├── src/ # production Python modules mirroring the notebook pipeline
+│   └── check_everything.sh   # one-command health check for the whole project
+├── src/                      # production Python modules mirroring the notebook pipeline
 ├── tests/
-│ ├── unit/ # preprocessing, feature building, validation (26 tests)
-│ ├── data/ # schema, ranges, missing values, leakage checks (13 tests)
-│ ├── model/ # model loading, prediction shape, notebook-parity (6 tests)
-│ └── integration/ # end-to-end API route tests (8 tests)
+│   ├── unit/                 # preprocessing, feature building, validation (26 tests)
+│   ├── data/                 # schema, ranges, missing values, leakage checks (13 tests)
+│   ├── model/                 # model loading, prediction shape, notebook-parity (6 tests)
+│   └── integration/           # end-to-end API route tests (8 tests)
 ├── requirements/
-│ ├── base.txt # exact versions needed to run the pipeline / API
-│ └── dev.txt # base.txt + notebooks, tests, and dev tools
-├── .github/workflows/ci.yml # lint, format check, tests, build & push image
+│   ├── base.txt               # exact versions needed to run the pipeline / API
+│   └── dev.txt                 # base.txt + notebooks, tests, and dev tools
+├── .github/workflows/ci.yml   # lint, format check, tests, build & push image
 ├── .pre-commit-config.yaml
 ├── Dockerfile
 ├── docker-compose.yml
 └── pytest.ini
+```
 
 ## Setup — running this from scratch
+
 
 1. **Clone the repo and enter it**
 ```bash
