@@ -257,3 +257,36 @@ Once an order's real delivery date is known, `actual_outcome` can be backfilled 
 ### Alerting
 
 See [`docs/ALERTING.md`](docs/ALERTING.md) for the documented decision on what conditions should trigger an alert (error rate, latency, prediction drift, uptime) and why. No alerting infrastructure is wired up — this task calls for the decision to be made and written down, which is what that document is.
+
+## Security note: database credentials in notebooks
+
+An earlier version of `Notebook1.ipynb` and `Notebook5.ipynb`
+hardcoded the local Postgres connection details (including the
+password) directly in a code cell. This has been fixed — both
+notebooks now load credentials from `.env` via `python-dotenv`,
+consistent with the rest of the project.
+
+Older commits in this repository's history still contain the
+original hardcoded (local, development-only) password. Since this
+is a private repository, the password was left as-is rather than
+rotated; in a real/shared repository, any credential that has ever
+been committed should be treated as compromised and rotated
+immediately, regardless of whether the repo is later "cleaned up."
+
+## Project status
+
+All 10 steps of Task 3 are complete:
+
+1. Repository structure & configuration
+2. Notebooks refactored into Python modules
+3. Logging & error handling
+4. Data versioning (DVC) & validation (Great Expectations)
+5. Experiment tracking & model registry (MLflow)
+6. Testing (pytest — 53 tests)
+7. Inference API (FastAPI)
+8. Containerization (Docker & Docker Compose)
+9. CI/CD (GitHub Actions, ruff, pre-commit)
+10. Monitoring (Prometheus metrics, prediction logging, alerting policy)
+
+See `scripts/check_everything.sh` for a one-command health check
+covering every step above.
