@@ -105,6 +105,22 @@ check "ruff format check passes" "ruff format --check ."
 
 echo ""
 echo "=================================================="
+echo "  STEP 10 — Monitoring"
+echo "=================================================="
+check "src/metrics.py exists" "[ -f src/metrics.py ]"
+check "src/prediction_log.py exists" "[ -f src/prediction_log.py ]"
+check "docs/ALERTING.md exists" "[ -f docs/ALERTING.md ]"
+check "predictions.db is git-ignored" "git check-ignore -q predictions.db"
+check "metrics module loads without error" "python -c \"from src.metrics import REQUEST_COUNT, ERROR_COUNT, REQUEST_LATENCY, PREDICTION_COUNT\""
+
+echo ""
+echo "=================================================="
+echo "  EXTRA — No hardcoded DB credentials"
+echo "=================================================="
+check "no hardcoded password in notebooks/ or src/" "! grep -rn 'mysecretpassword' notebooks/ src/ app/ config/ 2>/dev/null"
+
+echo ""
+echo "=================================================="
 echo "  RESULTS: $PASS passed, $FAIL failed"
 echo "=================================================="
 
