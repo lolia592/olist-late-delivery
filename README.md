@@ -219,7 +219,15 @@ All 10 steps of Task 3 are complete:
 6. Testing (pytest — 53 tests)
 7. Inference API (FastAPI)
 8. Containerization (Docker & Docker Compose)
-9. CI/CD (GitHub Actions, ruff, pre-commit)
+9. CI/CD (GitHub Actions, ruff, pre-commit) — **note: CI runs 26 of the 53 tests; see the CI/CD section above for why**
 10. Monitoring (Prometheus metrics, prediction logging, alerting policy)
+
+### Known production-readiness gaps
+
+Acceptable for this training task, but would need addressing for a real deployment:
+
+- **CI only runs `tests/unit/` (26/53).** The data/model/integration tests depend on local DVC and MLflow state not reachable from GitHub's runners (see "CI/CD" section above). A test that breaks notebook-parity or an API route could pass CI undetected.
+- **The DVC remote (`~/dvc-storage`) is a local folder.** `dvc pull` would fail if this repo were cloned onto a genuinely different machine. A shared remote (S3/GCS) would be needed for true "clone and run anywhere."
+- **MLflow's local file store requires the container's `WORKDIR` to match the host's absolute path.** This works but is fragile and machine-specific. A real deployment would use a hosted MLflow tracking server with remote artifact storage (e.g. S3) instead of a local SQLite file store.
 
 Run `scripts/check_everything.sh` for a one-command health check covering every step above.
